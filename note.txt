@@ -1,0 +1,6 @@
+// do migration after modifications of table
+1. npx sequelize-cli migration:generate --name update-user-schema
+2. npx sequelize-cli db:migrate
+
+// run the application
+npx nodemon index.js

@@ -1,0 +1,116 @@
+<div class="col-md-2 col-sm-12 content-height rounded-3">
+    <div class="accordion shadow-lg" id="accordionExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    TOP HITS
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <div class="list-group" id="topHitsList">
+                        <!-- Content will be dynamically inserted here -->
+                    </div>  
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    MOST PLAYED
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <div class="list-group" id="mostPlayedList">
+                        <!-- Content will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<div class="audio-player" id="audio-player">
+<audio id="audio-element" src=""></audio>
+
+<!-- Left: Song Info -->
+<div class="song-info">
+<span id="current-song">
+    <strong id="song-title">Song Title</strong><br>
+    <small id="song-artist">Artist Name</small>
+</span>
+</div>
+
+<!-- Center: Playback Controls -->
+<div class="playback-controls">
+<div class="control-buttons">
+    <button id="previous-button">
+        <i class="fas fa-backward"></i>
+    </button>
+    <button id="play-pause-button">
+        <i class="fas fa-play" id="player-icon"></i>
+    </button>
+    <button id="next-button">
+        <i class="fas fa-forward"></i>
+    </button>
+</div>
+<!-- Progress Bar -->
+<div class="progress-container d-flex flex-column align-items-center">
+    <div class="d-flex justify-content-between w-100">
+        <span id="current-time" class="text-white">0:00</span>
+        <span id="total-duration" class="text-white">0:00</span>
+    </div>
+    <input type="range" id="progress-bar" min="0" max="100" value="0" class="w-100">
+</div>
+</div>
+
+<!-- Right: Volume and Download -->
+<div id="user-id" data-user-id="<%= username %>" style="display: none;"></div>
+<div class="extra-controls">
+<button id="repeat-button">
+    <i class="fa-solid fa-repeat"></i>
+</button>
+<button id="shuffle-button">
+    <i class="fa-solid fa-shuffle"></i>
+</button>
+<button id="volume-button">
+    <i class="fas fa-volume-up"></i>
+</button>
+<input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1" style="width: 80px;">
+<a id="download-button" href="#" download>
+    <i class="fas fa-download"></i>
+</a>
+</div>
+</div>
+
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+<div class="modal-content">
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="feedbackModalLabel">Feedback</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form onsubmit="submitFeedback(event)">
+            <div class="mb-3">
+                <textarea class="form-control" id="feedback_text" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Feedback</button>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/js/playlistFormHandler.js" defer></script>
+<script src="/js/searchSong.js" defer></script>
+<script src="/js/feedback.js"></script>
+<script src="/js/autoRefresh.js"></script>
+</body>
+
+</html>

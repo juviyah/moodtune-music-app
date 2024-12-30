@@ -1,0 +1,101 @@
+<%- include('../user/header') %>
+<%- include('../user/sideMyPlaylist') %>
+<div class="col-md-8 col-sm-12 content-height shadow-lg rounded-3">
+    <div id="playlist-id" data-playlist-id="<%= playlistData.playlist_id %>" style="display: none;"></div>
+    <div class="d-flex justify-content-end mb-2 mt-2">
+        <input type="text" id="searchInput" class="form-control w-25" placeholder="Search in playlist..." aria-label="Search songs">
+    </div>
+    <div class="table-container">
+        <table class="table table-hover table-sm" id="songsTable">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th>Title</th>
+                    <th>Album</th>
+                    <th class="text-end">Duration</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                <% if (playlistWithSongs.length===0) { %>
+                    <tr class="align-middle">
+                        <td colspan="6" class="text-center">No songs found</td>
+                    </tr>
+                <% } else { %>
+                    <% playlistWithSongs.forEach((song, index) => { %>
+                        <tr class="align-middle">
+                            <td>
+                                <%= index + 1 %>
+                            </td>
+                            <td>
+                                <button
+                                    class="play-button"
+                                    data-song-id="<%= song.song_id %>"
+                                    data-file-url="/<%= song.file_url %>"
+                                    data-title="<%= song.title %>" 
+                                    data-artist="<%= song.artist %>"
+                                    data-playlistId="<%= typeof playlistId !== 'undefined' ? playlistId : null %>"
+                                >
+                                    <i class="fa-solid fa-play"></i>
+                                </button>
+                            </td>
+                            <td>
+                                <a href="/songs/<%= song.song_id %>" class="text-decoration-none">
+                                    <strong>
+                                        <%= song.title %>
+                                    </strong><br>
+                                    <small>
+                                        <%= song.artist %>
+                                    </small>
+                                </a>
+                            </td>
+                            <td>
+                                <%= song.album %>
+                            </td>
+                            <td class="text-end">
+                                <%= song.duration %>
+                            </td>
+                            <td class="text-end">
+                                <button 
+                                    type="button" 
+                                    class="btn btn-success btn-sm" 
+                                    aria-label="Add Song" 
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addSongPlaylistModal" 
+                                    onclick="setCurrentSongId('<%= song.song_id %>'); event.stopPropagation();"
+                                >
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                                <% if (username === song.created_by) { %>
+                                    <button 
+                                        class="btn btn-primary btn-sm btn-edit"
+                                        data-song_id="<%= song.song_id %>"
+                                    >
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                <% } %>
+                                <form
+                                    style="display: inline;" 
+                                    action="#" 
+                                    method="POST" 
+                                    onsubmit="return confirmDelete(event, '<%= playlistData.playlist_id %>','<%= song.song_id %>')">
+                                        <button 
+                                            type="submit" 
+                                            class="btn btn-danger btn-sm" 
+                                        >
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<%- include('../user/footer') %>
+<script src="/js/checkConnection.js"></script>
+<script src="/js/userSongFormHandler.js" defer></script>
+<script src="/js/songPlayerHandler.js" defer></script>

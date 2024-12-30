@@ -1,0 +1,340 @@
+<%- include('../partials/header') %>
+
+<main class="content px-3 py-4 dashboard-table-container">
+    <div class="container-fluid">
+        <div class="mb-3">
+            <div class="row">
+                <div class="col-8">
+                    <h3 class="fw-bold fs-4 mb-3">ADMIN DASHBOARD</h3>
+                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                        <div class="col">
+                            <div class="card mb-3 h-100">
+                                <div class="card-body text-center">
+                                    <p class="card-text">
+                                        <h1 class="mb-0"><strong><a href="/admin/songs"><%= songCount %></a></strong></h1>
+                                        <small>Total Songs</small>
+                                    </p>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <small>
+                                        <a 
+                                            class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" 
+                                            href=""
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#topTracksModal"
+                                        >
+                                            Top Tracks   
+                                        </a>
+                                        |
+                                        <a 
+                                            class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" 
+                                            href=""
+                                            id="reset-play-count"
+                                        >
+                                            Reset Top Tracks   
+                                        </a>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card mb-3 h-100">
+                                <div class="card-body text-center">
+                                    <p class="card-text">
+                                        <h1 class="mb-0"><strong><a href="/admin/playlist"><%= playlistCount %></a></strong></h1>
+                                        <small>Total Playlist</small>
+                                    </p>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <small>
+                                        <a 
+                                            class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" 
+                                            href=""
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#topPlaylistModal"
+                                        >
+                                            Top Playlist   
+                                        </a>
+                                        |
+                                        <a 
+                                            class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" 
+                                            href="/admin/playlist"
+                                        >
+                                            Manage Playlist   
+                                        </a>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card mb-3 h-100">
+                                <div class="card-body text-center">
+                                    <p class="card-text">
+                                        <h1 class="mb-0"><strong><a href="/admin/users"><%= userCount %></a></strong></h1>
+                                        <small>Total Users</small>
+                                    </p>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <small>
+                                        <a 
+                                            class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" 
+                                            href="#"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#activeUserModal"
+                                        >
+                                            View Active Users  
+                                        </a>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <% 
+                    const formatDate = (dateString) => {
+                        const date = new Date(dateString);
+                        const options = { 
+                            month: '2-digit', 
+                            day: '2-digit', 
+                            year: 'numeric', 
+                            hour: '2-digit', 
+                            minute: '2-digit', 
+                            hour12: true 
+                        };
+                        const formattedDate = date.toLocaleString('en-US', options);
+                        
+                        // Split date and time and customize the output
+                        const [datePart, timePart] = formattedDate.split(', ');
+                        return `${datePart.replace(/\/(\d+)(\/)/, '/$1/') } at ${timePart}`;
+                    };
+                    %>
+
+                    <h5 class="fw-bold mt-3 mb-1 ">USER FEEDBACKS</h5>
+                    <div class="list-group feedback-container">
+                        <% if (feedbacks.length === 0) { %>
+                            <h5 class="mb-1">No Feedbacks!</h5>
+                        <% } else { %>
+                            <% feedbacks.forEach(feedback => { %>
+                                <a href="" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1"><%= feedback.username %></h5>
+                                        <small class="text-body-secondary"><%= formatDate(feedback.createdAt) %></small>
+                                    </div>
+                                    <p class="mb-1"><%= feedback.feedback_text %></p>
+                                </a>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <!-- <h3 class="fw-bold fs-4 mb-3">ADMIN DASHBOARD</h3> -->
+                    <h5 class="text-center fw-bold mb-3">Recently Played</h5>
+                    <div class="table-responsive recent-played-container">
+                        <table class="table table-hover table-striped table-sm">
+                            <thead>
+                                <tr class="highlight">
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Played by</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (recentPlays.length === 0) { %>
+                                    <tr class="align-middle">
+                                        <td colspan="2" class="text-center">No songs found</td>
+                                    </tr> 
+                                <% } else { %>
+                                    <% recentPlays.forEach((recentPlay, index) => { %>
+                                        <% 
+                                        const formatDate = (dateString) => {
+                                            const date = new Date(dateString);
+                                            const options = { 
+                                                month: '2-digit', 
+                                                day: '2-digit', 
+                                                year: 'numeric', 
+                                                hour: '2-digit', 
+                                                minute: '2-digit', 
+                                                hour12: true 
+                                            };
+                                            const formattedDate = date.toLocaleString('en-US', options);
+                                            
+                                            // Split date and time and customize the output
+                                            const [datePart, timePart] = formattedDate.split(', ');
+                                            return `${datePart.replace(/\/(\d+)(\/)/, '/$1/') } at ${timePart}`;
+                                        };
+
+                                        const recentPlayFormatted = formatDate(recentPlay.played_at);
+                                        %>
+                                        <tr class="align-middle">
+                                            <td>
+                                                <strong>
+                                                    <%= recentPlay.title %>
+                                                </strong><br>
+                                                <small>
+                                                    <%= recentPlay.artist %>
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <strong>
+                                                    <%= recentPlay.played_by %>
+                                                </strong><br>
+                                                <small>
+                                                    <%= recentPlayFormatted %>
+                                                </small>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</main>
+
+<!-- Top Tracks -->
+<div class="modal fade" id="topTracksModal" tabindex="-1" aria-labelledby="topTracksModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="topTracksModalLabel">Top Tracks</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr class="highlight">
+                            <th scope="col">#</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Artist</th>
+                            <th scope="col">Play Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (topSongs.length === 0) { %>
+                            <tr class="align-middle">
+                                <td colspan="4" class="text-center">No songs found</td>
+                            </tr> 
+                        <% } else { %>
+                            <% topSongs.forEach((topSong, index) => { %>
+                                <tr class="align-middle">
+                                    <td><%= index + 1 %></td>
+                                    <td><%= topSong.title %></td>
+                                    <td><%= topSong.artist %></td>
+                                    <td><%= topSong.play_count %></td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Top Playlist -->
+<div class="modal fade" id="topPlaylistModal" tabindex="-1" aria-labelledby="topPlaylistModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="topPlaylistModalLabel">Top Playlist</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr class="highlight">
+                            <th scope="col">#</th>
+                            <th scope="col">Icon</th>
+                            <th scope="col">Playlist</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (topPlaylists.length === 0) { %>
+                            <tr class="align-middle">
+                                <td colspan="3" class="text-center">No playlist found</td>
+                            </tr> 
+                        <% } else { %>
+                            <% topPlaylists.forEach((topPlaylist, index) => { %>
+                                <tr class="align-middle" onclick="location.href='/playlist/<%= topPlaylist.playlist_id %>';" style="cursor: pointer;">
+                                    <td><%= index + 1 %></td>
+                                    <td>
+                                        <img src="<%= topPlaylist.playlist_icon %>" width="50">
+                                    </td>
+                                    <td>
+                                        <strong>
+                                            <%= topPlaylist.playlist_name %>
+                                        </strong><br>
+                                        <small>
+                                            <%= topPlaylist.playlist_type %>
+                                        </small>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- Active Users -->
+<div class="modal fade" id="activeUserModal" tabindex="-1" aria-labelledby="activeUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="activeUserModalLabel">Active Users</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr class="highlight">
+                            <th scope="col">#</th>
+                            <th scope="col">Username</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Play Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (topUsers.length === 0) { %>
+                            <tr class="align-middle">
+                                <td colspan="4" class="text-center">No songs found</td>
+                            </tr> 
+                        <% } else { %>
+                            <% topUsers.forEach((topUser, index) => { %>
+                                <tr class="align-middle">
+                                    <td><%= index + 1 %></td>
+                                    <td><%= topUser.username %></td>
+                                    <td><%= topUser.email %></td>
+                                    <td><%= topUser.play_count %></td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
+<script src="/js/dashboardFormhandler.js" defer></script>

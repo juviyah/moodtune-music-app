@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/css/user.css">
+</head>
+
+<body>    
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="/images/logo2.png" alt="MoodTune" width="155" height="30">
+            </a>
+
+            <button class="navbar-toggler mb-2  " type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <form class="d-flex ms-auto w-25" role="search">
+                    <input class="form-control me-2" type="search" id="song-search" placeholder="Search for a song or artist..." aria-label="Search">
+                    <a href="/official-playlist"  class="fa-solid fa-list" title = "Recommended Playlist"></a>
+                </form>
+
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/">HOME</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/downloads">DOWNLOADS</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <strong><%= username %></strong>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile/<%= username %>">Profile</a></li>
+                            <li><a class="dropdown-item" href="" data-bs-toggle="modal" data-bs-target="#feedbackModal">Submit Feedback</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="confirmLogout(event)" >Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="d-flex justify-content-center">
+            <div id="suggestions" class="list-group mt-2">
+                <!-- search results here -->
+            </div>
+        </div>
+        
+        <div class="row small-font mt-1">
+           
+
+            <!-- create playlist modal -->
+            <div class="modal fade" id="createPlaylistModal" tabindex="-1" aria-labelledby="createPlaylistModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="createPlaylistModalLabel">Create New Playlist</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="createPlaylistForm">
+                                <div class="row g-3 mb-2">
+                                    <input type="hidden" id="officialPlaylist" name="officialPlaylist" value="0">
+                                    <input type="hidden" id="createdBy" name="createdBy" value="<%= username %>">
+                                    <div class="col-sm-8">
+                                        <label for="playlistName" class="form-label">Playlist Name</label>
+                                        <input type="text" class="form-control" id="playlistName" name="playlistName" placeholder="Enter Playlist Name" required>
+                                    </div>
+                                    <div class="col-sm">
+                                        <label for="playlistType" class="form-label">Playlist Type</label>
+                                        <select class="form-select" id="playlistType" name="playlistType" required>
+                                            <option value="mood">Mood</option>
+                                            <option value="activity">Activity</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <label for="iconSearch" class="form-label">Search Icon</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="iconSearch" placeholder="Search for an icon" aria-label="Search for an icon">
+                                        <button type="button" class="btn btn-primary" id="searchIconBtn">Search</button>
+                                    </div>
+                                    <div 
+                                        class="row row-cols-1 row-cols-md-3 g-4 mt-2" 
+                                        id="iconResults"
+                                    >
+                                        <!-- icon search result here -->
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="playlistIcon" class="form-label">Selected Icon URL</label>
+                                    <input type="text" class="form-control" id="playlistIcon" name="playlistIcon" placeholder="Selected Icon URL">
+                                </div>
+                                <button type="submit" class="btn btn-success">Create Playlist</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- assign  -->
+            <div class="modal fade" id="addSongPlaylistModal" tabindex="-1" aria-labelledby="addSongPlaylistModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addSongPlaylistModalLabel">Add song to playlist</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Playlist Name</th>
+                                        <th scope="col">Type</th>
+                                        <th scope="col" class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (userPlaylists.length === 0) { %>
+                                        <tr class="align-middle">
+                                            <td colspan="3" class="text-center">No playlist created.</td>
+                                        </tr>
+                                    <% } else { %>
+                                        <% userPlaylists.forEach(userPlaylist => { %>
+                                            <tr class="align-middle">
+                                                <td><%= userPlaylist.playlist_name %></td>
+                                                <td><%= userPlaylist.playlist_type %></td>
+                                                <td class="text-end">
+                                                    <button 
+                                                        type="button" 
+                                                        class="btn btn-success btn-sm" 
+                                                        aria-label="Add Song"
+                                                        onclick="assignSongToPlaylist('<%= userPlaylist.playlist_id %>'); event.stopPropagation();"
+                                                    >
+                                                        <i class="fa-solid fa-plus"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                function confirmLogout(event) {
+  event.preventDefault(); // Prevent the default link behavior
+
+  if (confirm('Are you sure you want to logout?')) {
+    // User confirmed logout
+    fetch('/logout', {
+      method: 'GET',
+      credentials: 'include', // Include cookies in the request
+    })
+      .then((response) => {
+        if (response.redirected) {
+          window.location.href = response.url; // Redirect to the login page
+        } else {
+          alert('Logout failed. Please try again.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error during logout:', error);
+        alert('An error occurred. Please try again.');
+      });
+  }
+}
+
+            </script>

@@ -1,0 +1,16 @@
+<div class="col-md-2 col-sm-12 content-height rounded-3">
+    <div class="list-group">
+       
+        <strong class="fs-4 text-center">New Added Songs</strong>
+        <% if (latestUploads.length === 0) { %>
+                <strong>No Songs Found</strong><br>
+        <% } else { %>
+            <% latestUploads.forEach((latestUpload, index) => { %>
+                <a href="/songs/<%= latestUpload.song_id %>" class="list-group-item list-group-item-action">
+                    <strong><%= index + 1 %>. <%= latestUpload.title %></strong><br>
+                    <%= latestUpload.artist %>
+                </a>
+            <% }) %>
+        <% } %>
+    </div> 
+</div>

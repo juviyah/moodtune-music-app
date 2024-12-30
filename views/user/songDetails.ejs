@@ -1,0 +1,65 @@
+<%- include('../user/header') %>
+<%- include('../user/sideSongSuggestion') %>
+<div class="col-md-8 col-sm-12 content-height shadow-lg rounded-3">
+    <div class="card mt-2 full-height-minus-180">
+        <div class="row g-0">
+            <div class="col-md-6 d-flex justify-content-center align-items-center full-height-minus-180">
+                <img src="/<%= song.cover_image_url %>" class="img-fluid p-2 rounded-4" alt="...">
+            </div>
+            <div class="col-md-6">
+                <div class="card-header d-flex align-items-center">
+                    <button
+                        class="play-button" 
+                        data-song-id="<%= song.song_id %>"
+                        data-file-url="/<%= song.file_url %>"
+                        data-title="<%= song.title %>" 
+                        data-artist="<%= song.artist %>"
+                        data-playlistId="<%= typeof playlistId !== 'undefined' ? playlistId : null %>"
+                    >
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                    <div class="ms-2">
+                        <h5 class="card-title mb-0"><%= song.title %></h5>
+                        <p class="card-text mb-0">
+                            <small class="text-body-secondary">
+                                <%= song.artist %>
+                            </small>
+                            | 
+                            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover lyrics-button"  
+                                data-title="<%= song.title %>" 
+                                data-artist="<%= song.artist %>"
+                                data-bs-toggle="collapse" 
+                                href="#collapseLyrics" 
+                                aria-expanded="false"
+                                aria-controls="collapseLyrics">
+                                    Lyrics
+                            </a>
+                        </p>
+                    </div>
+                    <a  
+                        class="ms-auto"
+                        href="#"
+                        aria-label="Add Song" 
+                        data-bs-toggle="modal"
+                        data-bs-target="#addSongPlaylistModal" 
+                        onclick="setCurrentSongId('<%= song.song_id %>'); event.stopPropagation();"
+                    >
+                    
+                        <i class="fa-regular fa-square-plus fa-2xl text-end" style="color: #74C0FC;"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="collapse" id="collapseLyrics">
+                        <div class="card card-body scrollable" id="lyrics-container">
+                            <!-- lyrics here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../user/footer') %>
+<script src="/js/checkConnection.js"></script>
+<script src="/js/songPlayerHandler.js" defer></script>

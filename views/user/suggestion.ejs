@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+    <title>MoodTune - Suggestion</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/css/user.css">
+    <style>
+        body {
+            background-color: #031c3d;
+        }
+
+        .table_custom { --bs-table-bg: transparent !important; }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="/images/logo2.png" alt="MoodTune" width="155" height="30">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/">Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pt-2">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h2 class="text-center">What do you want to listen?</h2>
+                <div class="d-flex flex-column align-items-center justify-content-center shadow-lg rounded-3">
+                    <h4 class="text-center mt-2 mb-2">Create your first playlist</h4>
+                    <button type="button" class="btn btn-outline-primary mb-2" data-bs-toggle="modal" data-bs-target="#createPlaylistModal">
+                        CREATE PLAYLIST
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center pt-5">
+            <div class="col-md-6 shadow-lg rounded-3">
+                <h4 class="text-center mt-2 mb-2">Recommended Songs</h4>
+                <div class="d-flex flex-column align-items-center justify-content-center">
+                    <table class="table table-hover table-sm table_custom">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Title</th>
+                                <th>Album</th>
+                                <th class="text-end">Duration</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                            <% if (songs.length===0) { %>
+                                <tr class="align-middle">
+                                    <td colspan="6" class="text-center">No songs found</td>
+                                </tr>
+                            <% } else { %>
+                                <% songs.forEach((song, index) => { %>
+                                    <tr class="align-middle">
+                                        <td>
+                                            <%= index + 1 %>
+                                        </td>
+                                        <td>
+                                            <a href="/songs/<%= song.song_id %>" class="text-decoration-none">
+                                                <strong>
+                                                    <%= song.title %>
+                                                </strong><br>
+                                                <small>
+                                                    <%= song.artist %>
+                                                </small>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <%= song.album %>
+                                        </td>
+                                        <td class="text-end">
+                                            <%= song.duration %>
+                                        </td>
+                                        <td class="text-end">
+                                            <a 
+                                                href="#"
+                                                aria-label="Add Song" 
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#addSongPlaylistModal" 
+                                                onclick="setCurrentSongId('<%= song.song_id %>'); event.stopPropagation();"
+                                            >
+                                                <i class="fa-regular fa-square-plus fa-2xl" style="color: #74C0FC;"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <% if (totalPages > 1) { %>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+    
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+    
+                            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- create playlist modal -->
+        <div class="modal fade" id="createPlaylistModal" tabindex="-1" aria-labelledby="createPlaylistModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createPlaylistModalLabel">Create New Playlist</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="createPlaylistForm">
+                            <div class="row g-3 mb-2">
+                                <input type="hidden" id="officialPlaylist" name="officialPlaylist" value="0">
+                                <input type="hidden" id="createdBy" name="createdBy" value="<%= username %>">
+                                <div class="col-sm-8">
+                                    <label for="playlistName" class="form-label">Playlist Name</label>
+                                    <input type="text" class="form-control" id="playlistName" name="playlistName" placeholder="Enter Playlist Name" required>
+                                </div>
+                                <div class="col-sm">
+                                    <label for="playlistType" class="form-label">Playlist Type</label>
+                                    <select class="form-select" id="playlistType" name="playlistType" required>
+                                        <option value="mood">Mood</option>
+                                        <option value="activity">Activity</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label for="iconSearch" class="form-label">Search Icon</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="iconSearch" placeholder="Search for an icon" aria-label="Search for an icon">
+                                    <button type="button" class="btn btn-primary" id="searchIconBtn">Search</button>
+                                </div>
+                                <div 
+                                    class="row row-cols-1 row-cols-md-3 g-4 mt-2" 
+                                    id="iconResults"
+                                >
+                                    <!-- icon search result here -->
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="playlistIcon" class="form-label">Selected Icon URL</label>
+                                <input type="text" class="form-control" id="playlistIcon" name="playlistIcon" placeholder="Selected Icon URL">
+                            </div>
+                            <button type="submit" class="btn btn-success">Create Playlist</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- assign  -->
+        <div class="modal fade" id="addSongPlaylistModal" tabindex="-1" aria-labelledby="addSongPlaylistModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addSongPlaylistModalLabel">Add song to playlist</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Playlist Name</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col" class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (userPlaylists.length === 0) { %>
+                                    <tr class="align-middle">
+                                        <td colspan="3" class="text-center">No playlist created.</td>
+                                    </tr>
+                                <% } else { %>
+                                    <% userPlaylists.forEach(userPlaylist => { %>
+                                        <tr class="align-middle">
+                                            <td><%= userPlaylist.playlist_name %></td>
+                                            <td><%= userPlaylist.playlist_type %></td>
+                                            <td class="text-end">
+                                                <button 
+                                                    type="button" 
+                                                    class="btn btn-success btn-sm" 
+                                                    aria-label="Add Song"
+                                                    onclick="assignSongToPlaylist('<%= userPlaylist.playlist_id %>'); event.stopPropagation();"
+                                                >
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/playlistFormHandler.js" defer></script>
+</body>
+</html>

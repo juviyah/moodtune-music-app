@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+    <title>MoodTune - Login</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #031c3d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+           
+        </div>
+    </nav>
+    
+    <div class="container vh-100 d-flex align-items-center"> <!-- Full height and flexbox -->
+        <div class="row w-100">
+            <div class="col-md-7 d-flex justify-content-center">
+                <img src="/images/lap.png" alt="Description" class="img-fluid">
+            </div>
+            <div class="col-md-5 d-flex justify-content-center">
+                <form class="w-75 d-flex flex-column justify-content-center" id="loginForm">
+                    <h2 class="text-center mb-4">Welcome to MoodTune</h2>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="Username" required>
+                        <div class="invalid-feedback">Please enter your username.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Password" required>
+                        <div class="invalid-feedback">Please enter your password.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                    <div class="register-link text-center mt-3">
+                        <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#exampleModal" href="#">
+                            Forgot password?
+                        </a>
+                    </div>
+                    <div class="register-link text-center mt-3">
+                        <p>Don't have an account? 
+                            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="/registration">
+                                Register Now
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset password modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Request Password Reset</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reqResetPassword">
+                        <div class="mb-3">
+                            <label class="form-label" for="email">Email</label>
+                            <input class="form-control" type="email" name="email" placeholder="Enter your email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Request Password Reset</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/loginAndRegistration.js" defer></script>
+</body>
+</html>

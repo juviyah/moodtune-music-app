@@ -1,0 +1,205 @@
+<%- include('../user/header') %>
+<%- include('../user/sideSongSuggestion') %>
+<div class="col-md-8 col-sm-12 content-height shadow-lg rounded-3">
+    <div class="card mt-2 full-height-minus-180">
+        <div class="row g-0">
+            <div class="col-md-6 d-flex justify-content-center align-items-center full-height-minus-180">
+                <img id="song-cover" src="/<%= song.cover_image_url %>" class="img-fluid p-2 rounded-4" alt="...">
+            </div>
+            <div class="col-md-6">
+                <div class="card-header d-flex align-items-center">
+                    <div class="ms-2">
+                        <h5 class="card-title mb-0"><%= song.title %></h5>
+                        <p class="card-text mb-0">
+                            <small class="text-body-secondary">
+                                <%= song.artist %>
+                            </small>
+                            | 
+                            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover lyrics-button"  
+                                data-title="<%= song.title %>" 
+                                data-artist="<%= song.artist %>"
+                                data-bs-toggle="collapse" 
+                                href="#collapseLyrics" 
+                                aria-expanded="false"
+                                aria-controls="collapseLyrics">
+                                    Lyrics
+                            </a>
+                            | 
+                            <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover list-button"  
+                                data-title="<%= song.title %>" 
+                                data-artist="<%= song.artist %>"
+                                data-bs-toggle="collapse" 
+                                href="#collapseList" 
+                                aria-expanded="false"
+                                aria-controls="collapseList">
+                                    List
+                            </a>
+                        </p>
+                    </div>
+                    <a  
+                        class="ms-auto"
+                        href="#"
+                        aria-label="Add Song" 
+                        data-bs-toggle="modal"
+                        data-bs-target="#addSongPlaylistModal" 
+                        onclick="setCurrentSongId('<%= song.song_id %>'); event.stopPropagation();"
+                    >
+                    
+                        <i class="fa-regular fa-square-plus fa-2xl text-end" style="color: #74C0FC;"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="collapse" id="collapseLyrics">
+                        <div class="card card-body scrollable" id="lyrics-container">
+                            <!-- lyrics here -->
+                        </div>
+                    </div>
+                    <div class="collapse" id="collapseList">
+                        <div class="card card-body scrollable" id="lyrics-container">
+                            <div class="table-container">
+                                <table class="table table-hover table-sm" id="songsTable">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th>Title</th>
+                                            <th>Album</th>
+                                            <th class="text-end">Duration</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-group-divider">
+                                        <% if (searchedsongs.length===0) { %>
+                                            <tr class="align-middle">
+                                                <td colspan="6" class="text-center">No songs found</td>
+                                            </tr>
+                                        <% } else { %>
+                                            <% searchedsongs.forEach((searchedsong, index) => { %>
+                                                <tr class="align-middle">
+                                                    <td>
+                                                        <%= index + 1 %>
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            class="play-button"
+                                                            data-song-id="<%= searchedsong.song_id %>"
+                                                            data-file-url="/<%= searchedsong.file_url %>"
+                                                            data-title="<%= searchedsong.title %>" 
+                                                            data-artist="<%= searchedsong.artist %>"
+                                                            data-playlistId="<%= typeof playlistId !== 'undefined' ? playlistId : null %>"
+                                                            data-cover-image-url="<%= searchedsong.cover_image_url %>"
+                                                            data-lyrics-url="/lyrics?title=<%= encodeURIComponent(searchedsong.title) %>&artist=<%= encodeURIComponent(searchedsong.artist) %>"
+                                                        >
+                                                            <i class="fa-solid fa-play"></i>
+                                                        </button>
+                                                    </td>
+                                                    <td>
+                                                        <strong>
+                                                            <%= searchedsong.title %>
+                                                        </strong><br>
+                                                        <small>
+                                                            <%= searchedsong.artist %>
+                                                        </small>
+                                                    </td>
+                                                    <td>
+                                                        <%= searchedsong.album %>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <%= searchedsong.duration %>
+                                                    </td>
+                                                </tr>
+                                            <% }) %>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../user/footer') %>
+<script src="/js/checkConnection.js"></script>
+<script src="/js/songPlayerHandler.js" defer></script>
+<script>
+    $(document).ready(function() {
+        $('#collapseList').collapse('show');
+
+        $('.lyrics-button').click(function() {
+            $('#collapseList').collapse('hide'); 
+        });
+
+        $('.list-button').click(function() {
+            $('#collapseLyrics').collapse('hide');
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+    const playButtons = document.querySelectorAll('.play-button');
+    const lyricsButton = document.querySelector('.lyrics-button');
+    const songCover = document.querySelector('#song-cover');
+    const songTitle = document.querySelector('.card-title');
+    const songArtist = document.querySelector('.card-text small');
+    const tableRows = document.querySelectorAll('#songsTable tbody tr');
+
+    function updateSongDetails(songId, title, artist, coverImageUrl) {
+        songCover.src = coverImageUrl.startsWith('/') ? coverImageUrl : `/${coverImageUrl}`;
+        songTitle.textContent = title;
+        songArtist.textContent = artist;
+
+        lyricsButton.setAttribute('data-title', title);
+        lyricsButton.setAttribute('data-artist', artist);
+    }
+
+    playButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            playButtons.forEach(btn => btn.innerHTML = '<i class="fa-solid fa-play"></i>');
+            this.innerHTML = '<i class="fa-solid fa-pause fa-lg"></i>';
+
+            const songId = this.getAttribute('data-song-id');
+            const title = this.getAttribute('data-title');
+            const artist = this.getAttribute('data-artist');
+            const coverImageUrl = this.getAttribute('data-cover-image-url');
+
+            updateSongDetails(songId, title, artist, coverImageUrl);
+
+            const currentUrl = window.location.pathname;
+            const urlParts = currentUrl.split('/');
+            const searchTerm = urlParts[2];  
+            const newUrl = `/songs/${searchTerm}/${songId}`;
+            history.pushState({ songId: songId }, '', newUrl);
+        });
+    });
+
+    const observeActiveClass = (row) => {
+        const observer = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (row.classList.contains('table-active')) {
+                        const songId = row.querySelector('button.play-button').getAttribute('data-song-id');
+                        const title = row.querySelector('td:nth-child(3) strong').textContent; 
+                        const artist = row.querySelector('td:nth-child(3) small').textContent; 
+                        const coverImageUrl = row.querySelector('button.play-button').getAttribute('data-cover-image-url'); 
+                        
+                        updateSongDetails(songId, title, artist, coverImageUrl);
+
+                        const currentUrl = window.location.pathname;
+                        const urlParts = currentUrl.split('/');
+                        const searchTerm = urlParts[2];  
+                        const newUrl = `/songs/${searchTerm}/${songId}`;
+                        history.pushState({ songId: songId }, '', newUrl);
+                    }
+                }
+            }
+        });
+        observer.observe(row, { attributes: true });
+    };
+
+    tableRows.forEach(row => {
+        observeActiveClass(row);
+    });
+});
+</script>

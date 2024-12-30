@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        test title
+    </title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+    <style>
+        /* General Body and Page Styles */
+        body {
+            background-color: #0e0b0b;
+            color: #ffffff;
+            padding-top: 60px;
+            /* Space for the navbar */
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            height: 100vh;
+            background-color: #181818;
+            padding-left: 15px;
+        }
+
+        .top-played {
+            background-color: #181818;
+            padding: 20px;
+            border-left: 1px solid #282828;
+            height: 100vh;
+            overflow-y: auto;
+            /* Allow scrolling if needed */
+        }
+
+        /* Song List Styles */
+        .song-list {
+            padding: 10px;
+            padding-top: 10px;
+            /* Extra space for navbar */
+        }
+
+        .song-item {
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            justify-content: flex-start;
+            transition: background-color 0.3s;
+        }
+
+        .song-item:hover {
+            background-color: #282828;
+        }
+
+        /* Play Button Styles */
+        .play-button {
+            background: none;
+            border: none;
+            color: #b3b3b3;
+            font-size: 20px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .play-button:hover {
+            color: #ffffff;
+        }
+
+        /* Mood Item Styles */
+        .mood-item {
+            border-radius: 5px;
+            padding: 10px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .mood-item:hover {
+            color: #ffffff;
+            background-color: #282828;
+        }
+
+        /* Audio Player Styles */
+        .audio-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #181818;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            /* Layout update */
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            height: 90px;
+            /* Adjusted height for better spacing */
+        }
+
+        /* Song Info on the left */
+        .song-info {
+            flex: 1;
+            text-align: left;
+            color: #ffffff;
+        }
+
+        /* Playback controls in the center */
+        .playback-controls {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+
+        .control-buttons button {
+            background: none;
+            border: none;
+            color: #b3b3b3;
+            font-size: 20px;
+            /* Increased size for better visibility */
+            cursor: pointer;
+            margin: 0 20px;
+            /* Added margin between buttons */
+        }
+
+        .control-buttons button:hover {
+            color: #ffffff;
+        }
+
+        /* Progress bar below the control buttons */
+        .progress-container {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        #progress-bar {
+            width: 100%;
+            appearance: none;
+            height: 5px;
+            background-color: #404040;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        #progress-bar::-webkit-slider-thumb {
+            appearance: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+        /* Volume and download on the right */
+        .extra-controls {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 15px;
+            /* Space between elements */
+        }
+
+        #volume-button,
+        #download-button {
+            background: none;
+            border: none;
+            color: #b3b3b3;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        #volume-button:hover,
+        #download-button:hover {
+            color: #ffffff;
+        }
+
+        #volume-slider {
+            appearance: none;
+            background-color: #404040;
+            height: 5px;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+            width: 80px;
+        }
+
+        #volume-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .audio-player {
+                flex-direction: column;
+                /* Stack controls on smaller screens */
+                height: auto;
+                /* Allow height to adjust */
+            }
+
+            .progress-container {
+                margin-top: 10px;
+                /* More spacing for smaller screens */
+            }
+
+            #volume-slider {
+                width: 100px;
+                /* Make volume slider wider */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">MoodTune</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/registration">Create an Account</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3 col-sm-12 rounded-4 sidebar">
+                <div class="song-list">
+                    <% if (moods.length===0) { %>
+                        <h4 class="mb-1">No moods found</h4>
+                        <% } else { %>
+                            <% moods.forEach(mood=> { %>
+                                <a href="/playlist/<%= mood.mood_id %>"
+                                    class="list-group-item list-group-item-action song-item mood-item">
+                                    <%= mood.mood_name %>
+                                </a>
+                                <% }) %>
+                                    <% } %>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12 bg-dark text-white rounded-4">
+                <table class="table table-dark table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th>Title</th>
+                            <th>Album</th>
+                            <th class="text-end">Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                        <% if (songs.length===0) { %>
+                            <tr class="align-middle">
+                                <td colspan="5" class="text-center">No songs found</td>
+                            </tr>
+                            <% } else { %>
+                                <% songs.forEach((song, index)=> { %>
+                                    <tr class="align-middle">
+                                        <td>
+                                            <%= index + 1 %>
+                                        </td>
+                                        <td>
+                                            <button class="play-button" data-file-url="/<%= song.file_url %>"
+                                                data-title="<%= song.title %>" data-artist="<%= song.artist %>">
+                                                <i class="fa-solid fa-play"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <a href="/songs/<%= song.song_id %>"
+                                                class="text-white text-decoration-none">
+                                                <strong>
+                                                    <%= song.title %>
+                                                </strong><br>
+                                                <small>
+                                                    <%= song.artist %>
+                                                </small>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <%= song.album %>
+                                        </td>
+                                        <td class="text-end">
+                                            <%= song.duration %>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-3 top-played rounded-4"></div>
+            <h4>Top Songs</h4>
+            <div class="song-list">
+                <div class="song-item">
+                    <div>
+                        <strong>Top Song 1</strong><br>
+                        <small>Artist X</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="audio-player" id="audio-player">
+        <audio id="audio-element" src=""></audio>
+
+        <!-- Left: Song Info -->
+        <div class="song-info">
+            <span id="current-song">
+                <strong id="song-title">Song Title</strong><br>
+                <small id="song-artist">Artist Name</small>
+            </span>
+        </div>
+
+        <!-- Center: Playback Controls -->
+        <div class="playback-controls">
+            <div class="control-buttons">
+                <button id="previous-button">
+                    <i class="fas fa-backward"></i>
+                </button>
+                <button id="play-pause-button">
+                    <i class="fas fa-play" id="player-icon"></i>
+                </button>
+                <button id="next-button">
+                    <i class="fas fa-forward"></i>
+                </button>
+            </div>
+            <!-- Progress Bar -->
+            <div class="progress-container d-flex flex-column align-items-center">
+                <div class="d-flex justify-content-between w-100">
+                    <span id="current-time">0:00</span>
+                    <span id="total-duration">0:00</span>
+                </div>
+                <input type="range" id="progress-bar" min="0" max="100" value="0" class="w-100">
+            </div>
+        </div>
+
+        <!-- Right: Volume and Download -->
+        <div class="extra-controls">
+            <button id="volume-button">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1" style="width: 80px;">
+            <a id="download-button" href="#" download>
+                <i class="fas fa-download"></i>
+            </a>
+        </div>
+    </div>
+
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

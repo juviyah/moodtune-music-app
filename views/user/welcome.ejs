@@ -1,0 +1,67 @@
+<%- include('../user/header') %>
+<%- include('../user/sideSongSuggestion') %>
+<div class="col-md-8 col-sm-12 content-height shadow-lg rounded-3">    
+    <div class="row small-font">
+        <strong class="fs-4 text-center mb-2">What do you want to listen?</strong>
+        <div class="col-md-6 col-sm-12 content-height rounded-3">
+            <h4 class="mb-3 d-flex justify-content-between align-items-center">
+                <span class="mx-auto">Mood</span>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#createPlaylistModal">
+                    <i class="fa-regular fa-square-plus" style="color: #74C0FC;"></i>
+                </a>
+            </h4>   
+            <div class="row pt-2 g-4">
+                <% if (moodPlaylists.length === 0) { %>
+                    <div class="col-12 text-center">
+                        <strong class="text-danger fs-4">No Playlist Found</strong>
+                    </div>
+                <% } else { %>
+                    <% moodPlaylists.forEach(moodPlaylist => { %>
+                        <div class="col-md-4 col-lg-4 col-xl-4">
+                            <div class="playlist-card card h-100 border-0 shadow-lg rounded-3 overflow-hidden">
+                                <a href="/my-playlist/<%= moodPlaylist.playlist_id %>" class="link-dark text-decoration-none">
+                                    <img src="<%= moodPlaylist.playlist_icon %>" alt="<%= moodPlaylist.playlist_name %>" class="card-img-top img-fluid">
+                                    <div class="text-center d-flex flex-column justify-content-between">
+                                        <h5 class="card-title fs-5 fw-bold text-truncate" title="<%= moodPlaylist.playlist_name %>"><%= moodPlaylist.playlist_name %></h5>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } %>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-12 content-height shadow rounded-3">
+            <h4 class="mb-3 d-flex justify-content-between align-items-center">
+                <span class="mx-auto">Activity</span>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#createPlaylistModal">
+                    <i class="fa-regular fa-square-plus" style="color: #74C0FC;"></i>
+                </a>
+            </h4>
+            <div class="row pt-2 g-4">
+                <% if (activityPlaylists.length === 0) { %>
+                    <div class="col-12 text-center">
+                        <strong class="text-danger fs-4">No Playlist Found</strong>
+                    </div>
+                <% } else { %>
+                    <% activityPlaylists.forEach(activityPlaylist => { %>
+                        <div class="col-md-4 col-lg-3 col-xl-4">
+                            <div class="playlist-card card h-100 border-0 shadow-lg rounded-3 overflow-hidden">
+                                <a href="/my-playlist/<%= activityPlaylist.playlist_id %>" class="link-dark text-decoration-none">
+                                    <img src="<%= activityPlaylist.playlist_icon %>" alt="<%= activityPlaylist.playlist_name %>" class="card-img-top img-fluid">
+                                    <div class="text-center d-flex flex-column justify-content-between">
+                                        <h5 class="card-title fs-5 fw-bold text-truncate" title="<%= activityPlaylist.playlist_name %>"><%= activityPlaylist.playlist_name %></h5>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../user/footer') %>
+<script src="/js/checkConnection.js"></script>
+<script src="/js/songPlayerHandler.js" defer></script>

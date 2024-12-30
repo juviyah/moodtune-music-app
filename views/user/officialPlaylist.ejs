@@ -1,0 +1,31 @@
+<%- include('../user/header') %>
+<%- include('../user/sideSongSuggestion') %>
+<div class="col-md-8 col-sm-12 content-height shadow-lg rounded-3">
+    <div class="row pt-2 g-4">
+        <% if (playlists.length === 0) { %>
+            <div class="col-12 text-center">
+                <strong class="text-danger fs-4">No Playlist Found</strong>
+            </div>
+        <% } else { %>
+            <% playlists.forEach(playlist => { %>
+                <div class="col-md-4 col-lg-3 col-xl-2">
+                    <div class="playlist-card card h-100 border-0 shadow-lg rounded-3 overflow-hidden">
+                        <span class="badge bg-primary position-absolute top-0 start-0 m-2">
+                            <%= playlist.playlist_type %> 
+                        </span>
+                        <a href="/official-playlist/<%= playlist.playlist_id %>" class="link-dark text-decoration-none">
+                            <img src="<%= playlist.playlist_icon %>" alt="<%= playlist.playlist_name %>" class="card-img-top img-fluid">
+                            <div class="card-body text-center d-flex flex-column justify-content-between">
+                                <h5 class="card-title fs-5 fw-bold text-truncate" title="<%= playlist.playlist_name %>"><%= playlist.playlist_name %></h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+</div>
+
+<%- include('../user/footer') %>
+<script src="/js/checkConnection.js"></script>
+<script src="/js/songPlayerHandler.js" defer></script>

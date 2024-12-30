@@ -1,0 +1,396 @@
+/* Make the columns scrollable if their content exceeds the height */
+.col-md-2,
+.col-md-8 {
+    max-height: calc(100vh - 120px); /* Adjust based on your navbar and audio player height */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+nav{
+    background-color: #09063a;
+}
+
+/* Play Button Styles */
+.play-button {
+    display: inline-block;
+      background-color: #d9e4f0; /* Bootstrap primary blue */
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 8px;
+      outline: none;
+      transition: transform 0.2s ease-in-out;
+}
+
+.play-button:hover {
+    color: hsl(180, 81%, 47%);
+    animation: pulse 0.5s infinite;
+}
+.play-button.active{
+    color:hsl(180, 81%, 47%);
+}
+@keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }}
+/* Audio Player Styles */
+.audio-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #020424;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Layout update */
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    height: 90px; /* Adjusted height for better spacing */
+}
+
+/* Song Info on the left */
+.song-info {
+    flex: 1;
+    text-align: left;
+    color: #ffffff;
+}
+
+/* Playback controls in the center */
+.playback-controls {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.control-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+.control-buttons button {
+    background: none;
+    border: none;
+    color: #ac9e9e;
+    font-size: 20px; /* Increased size for better visibility */
+    cursor: pointer;
+    margin: 0 20px; /* Added margin between buttons */
+}
+
+.control-buttons button:hover {
+    color: #0bd1a6;
+}
+
+/* Progress bar below the control buttons */
+.progress-container {
+    width: 100%;
+    margin-top: 5px;
+}
+
+#progress-bar {
+    width: 100%;
+    appearance: none;
+    height: 5px;
+    background-color: #c5d308;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+}
+
+#progress-bar::-webkit-slider-thumb {
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: pointer;
+}
+ .mt-3{
+    font-family: 'Times New Roman', Times, serif;
+    color: #131014;
+}
+/* Volume and download on the right */
+.extra-controls {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 15px; /* Space between elements */
+}
+
+#repeat-button,
+#shuffle-button,
+#volume-button,
+#download-button {
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/* Default repeat button */
+#repeat-button i {
+    color: gray;
+}
+
+/* Repeat One Mode: Blue style */
+#repeat-button i.repeat-one {
+    color: blue;
+}
+
+/* Repeat All Mode: Green style */
+#repeat-button i.repeat-all {
+    color: green;
+}
+
+#shuffle-button i.fa-shuffle-active {
+    color: green;
+}
+
+#repeat-button:hover,
+#shuffle-button:hover,
+#volume-button:hover,
+#download-button:hover {
+    color: #ffffff;
+}
+
+#volume-slider {
+    appearance: none;
+    background-color: #404040;
+    height: 5px;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    width: 80px;
+}
+
+#volume-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .audio-player {
+        flex-direction: column; /* Stack controls on smaller screens */
+        height: auto; /* Allow height to adjust */
+    }
+
+    .progress-container {
+        margin-top: 10px; /* More spacing for smaller screens */
+    }
+
+    #volume-slider {
+        width: 100px; /* Make volume slider wider */
+    }
+}
+
+.content-height{
+    height: calc(100vh - 160px);
+}
+
+.scrollable{ /* used in lyrics */
+    overflow-y: auto;
+    max-height: calc(100vh - 270px);
+}
+
+.highlight {
+    color: #007bff; /* Highlight color */
+    font-weight: bold;
+}
+
+.table-container {
+    max-height: calc(100vh - 230px); 
+    overflow-y: auto; 
+    display: block; 
+}
+
+thead th {
+    position: sticky; 
+    top: 0; 
+    z-index: 1; 
+}
+
+.small-font {
+    font-size: 1rem; /* Adjust the size as needed */
+}
+
+.full-height-minus-180 {
+    height: calc(100vh - 180px);
+}
+
+.active_playlist {
+    background-color:lightgrey;
+}
+
+#suggestions {
+    max-height: 200px;
+    overflow-y: auto;
+    width: 25%;
+    background-color: white;
+    position: absolute; /* To ensure the suggestion box stays below the input */
+    z-index: 10;
+}
+
+.suggestion-item {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Genre Filter Button Styles */
+.genre-filter {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.genre-filter .genre-btn {
+    margin: 5px;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: transparent;
+    border: 2px solid #007bff;
+    color: #007bff;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.genre-filter .genre-btn.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.genre-filter .genre-btn:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Playlist Card Styles */
+.playlist-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+    position: relative;
+    background-color: #fff;
+    height: 100%; /* Ensure consistent card height */
+}
+
+.playlist-card.hidden {
+    display: none; /* Used for hiding cards when they don't match the selected genre */
+}
+
+.playlist-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+    object-fit: contain;
+}
+
+.card-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-title {
+    color: #333;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.card-title:hover {
+    color: #007bff;
+}
+
+.playlist-icon-overlay {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.playlist-card:hover .playlist-icon-overlay {
+    opacity: 1;
+}
+
+.playlist-icon-overlay i {
+    font-size: 2rem;
+    color: #007bff;
+    cursor: pointer;
+}
+
+.playlist-icon-overlay i:hover {
+    color: #0056b3;
+}
+
+/* Genre Badge Styling */
+.badge {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    border-radius: 10px;
+    padding: 5px 10px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    text-transform: capitalize;
+}
+form a{
+    color:white;
+    text-decoration: none;
+    font-size: 24px;
+    margin-top: 8px;
+}
+form a:hover  {
+    color: #007bff; /* Change icon color on hover */
+  }
+
+/* Focus styles for better accessibility */
+.playlist-card:focus-within {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* Media queries for better responsiveness */
+@media (max-width: 768px) {
+    .playlist-card {
+        height: 100%;
+    }
+
+    .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* Adjust genre filter button layout on smaller screens */
+    .genre-filter {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .genre-btn {
+        margin: 5px;
+        font-size: 0.9rem;
+        padding: 8px 15px;
+    }
+}

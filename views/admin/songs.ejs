@@ -1,0 +1,201 @@
+<%- include('../partials/header') %>
+
+<main class="content px-3 py-4">
+    <div class="container-fluid">
+        <div class="mb-3">
+            <h3 class="fw-bold fs-4 mb-3">Manage Songs</h3>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createSongModal">
+                    Add New Song
+                </button>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="searchInput" onkeyup="filterSongs()">
+                </form>
+            </div>
+            <div class="row">
+                <div class="table-responsive songs-table-container">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="highlight">
+                                <th scope="col">ID</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Play</th>
+                                <th scope="col">Artist</th>
+                                <th scope="col">Album</th>
+                                <th scope="col">Duration</th>
+                                <th scope="col">Tag</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (songs.length === 0) { %>
+                                <tr class="align-middle">
+                                    <td colspan="7" class="text-center">No songs found</td>
+                                </tr> 
+                            <% } else { %>
+                                <% songs.forEach(song => { %>
+                                    <tr class="align-middle">
+                                        <td><%= song.song_id %></td>
+                                        <td><%= song.title %></td>
+                                        <td>
+                                            <audio class="song-player align-middle" controls style="height: 30px;">
+                                                <source src="/<%= song.file_url %>" type="audio/mpeg">
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                        </td>
+                                        <td><%= song.artist %></td>
+                                        <td><%= song.album %></td>
+                                        <td><%= song.duration %></td>
+                                        <td><%= song.tags %></td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm btn-edit" data-song_id="<%= song.song_id %>">Edit</button>
+                                            <form action="/admin/songs/<%= song.song_id %>?_method=DELETE" method="POST" style="display:inline;" onsubmit="return confirmDelete()">
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <% if (totalPages > 1) { %>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                            <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                            </li>
+                        <% } %>
+
+                        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                            <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            <% } %>
+        </div>
+    </div>
+</main>
+
+<!-- Add New Song Modal -->
+<div class="modal fade" id="createSongModal" tabindex="-1" aria-labelledby="createSongModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createSongModalLabel">Add New Song</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createSongForm" enctype="multipart/form-data">
+                    <input type="hidden" class="form-control" id="created_by" name="created_by" value="<%= username %>">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Enter song title" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="artist" class="form-label">Artist</label>
+                            <input type="text" class="form-control" id="artist" name="artist" placeholder="Enter artist name" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="album" class="form-label">Album</label>
+                            <input type="text" class="form-control" id="album" name="album" placeholder="Enter album name">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="tag" class="form-label">Tag</label>
+                            <input type="text" class="form-control" id="tag" name="tag" placeholder="Enter tag name">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="duration" class="form-label">Duration</label>
+                            <input type="text" class="form-control" id="duration" name="duration" placeholder="Enter duration (e.g., 3:45)">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Upload Music File</label>
+                        <input type="file" class="form-control" id="file" name="file" accept=".mp3, .wav, .ogg" onchange="validateMusicFile('file');" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="coverImage" class="form-label">Upload Cover Image (Optional)</label>
+                        <input type="file" class="form-control" id="coverImage" name="coverImage" accept="image/*" onchange="validateCoverImage('coverImage');">
+                    </div>
+                    <button type="submit" class="btn btn-success">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Song Modal -->
+<div class="modal fade" id="updateSongModal" tabindex="-1" aria-labelledby="updateSongModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateSongModalLabel">Edit Song Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateSongForm" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-2 mb-3">
+                            <label for="updateSongID" class="form-label">Song ID</label>
+                            <input type="text" class="form-control" id="updateSongID" name="songId" disabled>
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <label for="updateTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="updateTitle" name="title" required>
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <label for="updateArtist" class="form-label">Artist</label>
+                            <input type="text" class="form-control" id="updateArtist" name="artist" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="updateAlbum" class="form-label">Album</label>
+                            <input type="text" class="form-control" id="updateAlbum" name="album">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="updateTag" class="form-label">Tag</label>
+                            <input type="text" class="form-control" id="updateTag" name="tags" placeholder="Enter tag name">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="updateDuration" class="form-label">Duration</label>
+                            <input type="text" class="form-control" id="updateDuration" name="duration">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateFile" class="form-label">Upload Music File</label>
+                        <input type="file" class="form-control" id="updateFile" name="file" accept=".mp3, .wav, .ogg" onchange="validateMusicFile('updateFile');">
+                        <small>Current Music File: <span id="existingFileUrl">No file uploaded</span></small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="udpateCoverImage" class="form-label">Upload Cover Image (Optional)</label>
+                        <input type="file" class="form-control" id="udpateCoverImage" name="coverImage" accept="image/*" onchange="validateCoverImage('udpateCoverImage');">
+                        <small>Current Cover Image: <span id="existingCoverImageUrl">No cover image uploaded</span></small>
+                    </div>
+                    <input type="hidden" id="updateSongUrl" name="songUrl">
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
+<script src="/js/songFormHandler.js" defer></script>
+<script src="/js/songPlayerManager.js" defer></script>

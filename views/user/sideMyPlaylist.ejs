@@ -1,0 +1,199 @@
+<div class="col-md-2 col-sm-12 content-height rounded-3">
+    <div class="card">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-header d-flex align-items-center">
+                    <img src="<%= playlistData.playlist_icon %>" class="img-fluid p-1" alt="...">
+                    <button 
+                        type="button"
+                        class="btn btn-success btn-sm ms-auto"
+                        data-bs-toggle="modal"
+                        data-bs-target="#exampleModalToggle"
+                        onclick="setCurrentPlaylist('<%= playlistData.playlist_id %>'); event.stopPropagation();">                        
+                            <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <form 
+                        style="display: inline;" 
+                        class="ms-auto"
+                        onsubmit="return confirmDeletePlaylist(event, '<%= playlistData.playlist_id %>'); event.stopPropagation();">
+                        <button 
+                            type="submit" 
+                            class="btn btn-danger btn-sm" 
+                        >
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <h5 class="mb-0"><%= playlistData.playlist_name %></h5>
+                    <p class="card-text">
+                        <small class="text-body-secondary">
+                            <%= playlistData.playlist_type %>
+                        </small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Song Modal -->
+<div class="modal fade" id="updateSongModal" tabindex="-1" aria-labelledby="updateSongModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateSongModalLabel">Edit Song Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateSongForm" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-2 mb-3">
+                            <label for="updateSongID" class="form-label">Song ID</label>
+                            <input type="text" class="form-control" id="updateSongID" name="songId" disabled>
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <label for="updateTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="updateTitle" name="title" required>
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <label for="updateArtist" class="form-label">Artist</label>
+                            <input type="text" class="form-control" id="updateArtist" name="artist" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="updateAlbum" class="form-label">Album</label>
+                            <input type="text" class="form-control" id="updateAlbum" name="album">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="updateTag" class="form-label">Tag</label>
+                            <input type="text" class="form-control" id="updateTag" name="tags" placeholder="Enter tag name">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="updateDuration" class="form-label">Duration</label>
+                            <input type="text" class="form-control" id="updateDuration" name="duration">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateFile" class="form-label">Upload Music File</label>
+                        <input type="file" class="form-control" id="updateFile" name="file" accept=".mp3, .wav, .ogg" onchange="validateMusicFile('updateFile');">
+                        <small>Current Music File: <span id="existingFileUrl">No file uploaded</span></small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="udpateCoverImage" class="form-label">Upload Cover Image (Optional)</label>
+                        <input type="file" class="form-control" id="udpateCoverImage" name="coverImage" accept="image/*" onchange="validateCoverImage('udpateCoverImage');">
+                        <small>Current Cover Image: <span id="existingCoverImageUrl">No cover image uploaded</span></small>
+                    </div>
+                    <input type="hidden" id="updateSongUrl" name="songUrl">
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Add to playlist</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <button 
+                        type="button" 
+                        class="btn btn-primary btn-sm" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#createSongModal"
+                    >
+                        Upload Song
+                    </button>
+                </div>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Artist</th>
+                            <th scope="col" class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (songsByTags.length === 0) { %>
+                            <tr class="align-middle">
+                                <td colspan="4" class="text-center">No songs found</td>
+                            </tr> 
+                        <% } else { %>
+                            <% songsByTags.forEach(songsByTag => { %>
+                                <tr class="align-middle">
+                                    <td><%= songsByTag.title %></td>
+                                    <td><%= songsByTag.artist %></td>
+                                    <td class="text-end">
+                                        <button 
+                                            type="button" 
+                                            class="btn btn-success btn-sm" 
+                                            aria-label="Add Song"
+                                            onclick="assignPlaylistToSong('<%= songsByTag.song_id %>'); event.stopPropagation();"
+                                        >
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="createSongModal" tabindex="-1" aria-labelledby="createSongModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createSongModalLabel">Add New Song</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createSongForm" enctype="multipart/form-data">
+                    <input type="hidden" class="form-control" id="created_by" name="created_by" value="<%= username %>">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Enter song title" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="artist" class="form-label">Artist</label>
+                            <input type="text" class="form-control" id="artist" name="artist" placeholder="Enter artist name" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="album" class="form-label">Album</label>
+                            <input type="text" class="form-control" id="album" name="album" placeholder="Enter album name">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="tag" class="form-label">Tag</label>
+                            <input type="text" class="form-control" id="tag" name="tag" placeholder="Enter tag name">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="duration" class="form-label">Duration</label>
+                        <input type="text" class="form-control" id="duration" name="duration" placeholder="Enter duration (e.g., 3:45)">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Upload Music File</label>
+                        <input type="file" class="form-control" id="file" name="file" accept=".mp3, .wav, .ogg" onchange="validateMusicFile('file');" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="coverImage" class="form-label">Upload Cover Image (Optional)</label>
+                        <input type="file" class="form-control" id="coverImage" name="coverImage" accept="image/*" onchange="validateCoverImage('coverImage');">
+                    </div>
+                    <button type="submit" class="btn btn-success">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/updateSongForm.js" defer></script>

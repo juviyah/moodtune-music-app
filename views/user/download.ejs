@@ -1,0 +1,20 @@
+<%- include('../user/header') %>
+<%- include('../user/sideSongSuggestion') %>
+<div class="col-md-8 col-sm-12 content-height shadow-lg rounded-3">
+    <table class="table table-hover table-sm" id="downloaded-songs-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th></th>
+                <th>Title</th>
+                <th class="text-end">Action</th>
+            </tr>
+        </thead>
+        <tbody class="table-group-divider" id="downloaded-songs-table-body">
+            <!-- View the downloaded songs here -->
+        </tbody>
+    </table>
+</div>
+
+<%- include('../user/footer') %>
+<script src="/js/downloadedSongsHandler.js" defer></script>
